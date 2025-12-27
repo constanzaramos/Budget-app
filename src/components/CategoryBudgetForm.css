@@ -1,0 +1,164 @@
+.category-budget-form-card {
+  background: var(--bg-card);
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+.category-budgets-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.category-budget-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background: #FFF9F9;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  transition: all 0.2s;
+}
+
+.category-budget-item:hover {
+  background: #FFF5F5;
+  box-shadow: 0 2px 4px rgba(255, 182, 193, 0.1);
+}
+
+.category-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.category-icon {
+  font-size: 1.5rem;
+  width: 32px;
+  text-align: center;
+}
+
+.category-name {
+  font-weight: 500;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.category-budget-input {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.budget-display-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.budget-amount-display {
+  font-weight: 600;
+  color: #FF91A4;
+  font-size: 0.95rem;
+  min-width: 100px;
+  text-align: right;
+}
+
+.edit-budget-button {
+  background: linear-gradient(135deg, #FFB6C1 0%, #FFDAB9 100%);
+  border: none;
+  color: #4A4A4A;
+  padding: 0.4rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 1px 3px rgba(255, 182, 193, 0.3);
+}
+
+.edit-budget-button:hover {
+  background: linear-gradient(135deg, #FF91A4 0%, #FFC8A2 100%);
+  transform: scale(1.1);
+  box-shadow: 0 2px 6px rgba(255, 182, 193, 0.4);
+}
+
+.budget-edit-form {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.budget-edit-input {
+  padding: 0.5rem;
+  border: 2px solid #F5E6E6;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  width: 120px;
+  transition: border-color 0.2s;
+}
+
+.budget-edit-input:focus {
+  outline: none;
+  border-color: #FFB6C1;
+  box-shadow: 0 0 0 3px rgba(255, 182, 193, 0.1);
+}
+
+.save-budget-button {
+  background: linear-gradient(135deg, #B0E0E6 0%, #87CEEB 100%);
+  border: none;
+  color: #4A4A4A;
+  padding: 0.4rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.save-budget-button:hover {
+  background: linear-gradient(135deg, #87CEEB 0%, #6BB6FF 100%);
+  transform: scale(1.1);
+}
+
+.cancel-budget-button {
+  background: transparent;
+  border: 2px solid #F5E6E6;
+  color: var(--text);
+  padding: 0.4rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancel-budget-button:hover {
+  background: #FFF5F5;
+  border-color: #FFB6C1;
+}
+
+@media (max-width: 768px) {
+  .category-budget-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .category-budget-input {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .budget-edit-input {
+    flex: 1;
+  }
+}
+

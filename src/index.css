@@ -1,0 +1,60 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --primary: #FFB6C1;
+  --primary-dark: #FF91A4;
+  --secondary: #E6E6FA;
+  --secondary-dark: #D8BFD8;
+  --accent: #FFDAB9;
+  --accent-dark: #FFC8A2;
+  --success: #B0E0E6;
+  --success-dark: #87CEEB;
+  --danger: #FFB6C1;
+  --danger-dark: #FF91A4;
+  --warning: #FFFACD;
+  --warning-dark: #FFF8DC;
+  --bg: #FFF5F5;
+  --bg-card: #FFFFFF;
+  --text: #4A4A4A;
+  --text-light: #8B7D8B;
+  --border: #F5E6E6;
+  --shadow: 0 2px 8px 0 rgba(255, 182, 193, 0.15), 0 1px 3px 0 rgba(255, 182, 193, 0.1);
+  --shadow-lg: 0 10px 25px -3px rgba(255, 182, 193, 0.2), 0 4px 6px -4px rgba(255, 182, 193, 0.15);
+}
+
+body {
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(135deg, #FFF5F5 0%, #FFE4E1 50%, #FFF0F5 100%);
+  background-attachment: fixed;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Dancing Script', cursive;
+  font-style: italic;
+  font-weight: 600;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+input, select {
+  font-family: inherit;
+}
+
