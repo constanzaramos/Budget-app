@@ -45,22 +45,21 @@ function BudgetSection({ budget, onSetBudget, categories, categoryBudgets, onSet
           <h3>Distribución del Presupuesto</h3>
           <ResponsiveContainer width="100%" height={350}>
             <PieChart>
-              <Pie
-                data={pieBudgetData}
-                cx="50%"
-                cy="50%"
-                labelLine={true}
-                label={({ name, percent }) => {
-                  if (percent > 0.04) {
-                    return `${(percent * 100).toFixed(0)}%`
-                  }
-                  return ''
-                }}
-                outerRadius={120}
-                fill="#FFB6C1"
-                dataKey="value"
-                labelLine={{ strokeWidth: 1, stroke: '#F5E6E6' }}
-              >
+                <Pie
+                  data={pieBudgetData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={{ strokeWidth: 1, stroke: '#F5E6E6' }}
+                  label={({ name, percent }) => {
+                    if (percent > 0.04) {
+                      return `${(percent * 100).toFixed(0)}%`
+                    }
+                    return ''
+                  }}
+                  outerRadius={120}
+                  fill="#FFB6C1"
+                  dataKey="value"
+                >
                 {pieBudgetData.map((entry, index) => (
                   <Cell key={`cell-budget-${index}`} fill={entry.color} />
                 ))}
