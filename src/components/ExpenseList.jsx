@@ -1,9 +1,9 @@
-import { Trash2, TrendingUp, Download } from 'lucide-react'
+import { Trash2, TrendingUp } from 'lucide-react'
 import { format, parseISO } from 'date-fns'
 import { es } from 'date-fns/locale'
 import './ExpenseList.css'
 
-function ExpenseList({ expenses, incomes, categories, onDeleteExpense, onDeleteIncome, currency, exchangeRate, currentMonth }) {
+function ExpenseList({ expenses, incomes, categories, onDeleteExpense, onDeleteIncome, currency, exchangeRate, currentMonth, title }) {
   const formatCurrency = (value) => {
     let amount = value
     if (currency === 'USD' && exchangeRate) {
@@ -26,81 +26,18 @@ function ExpenseList({ expenses, incomes, categories, onDeleteExpense, onDeleteI
     }
   }
 
-  const formatAmountForCSV = (value) => {
-    let amount = value
-    if (currency === 'USD' && exchangeRate) {
-      amount = value / exchangeRate
-    }
-    return amount.toFixed(currency === 'CLP' ? 0 : 2)
-  }
-
-  const downloadCSV = () => {
-    // Preparar datos para CSV
-    const csvRows = []
-    
-    // Encabezados
-    csvRows.push(['Fecha', 'Tipo', 'Descripción', 'Categoría/Fuente', `Monto (${currency})`])
-    
-    // Agregar gastos
-    expenses
-      .sort((a, b) => new Date(a.date) - new Date(b.date))
-      .forEach(expense => {
-        const category = getCategory(expense.categoryId)
-        csvRows.push([
-          format(parseISO(expense.date), 'dd/MM/yyyy'),
-          'Gasto',
-          expense.description,
-          category.name,
-          formatAmountForCSV(expense.amount)
-        ])
-      })
-    
-    // Agregar ingresos
-    incomes
-      .sort((a, b) => new Date(a.date) - new Date(b.date))
-      .forEach(income => {
-        csvRows.push([
-          format(parseISO(income.date), 'dd/MM/yyyy'),
-          'Ingreso',
-          income.description,
-          income.source || 'Ingreso',
-          formatAmountForCSV(income.amount)
-        ])
-      })
-    
-    // Convertir a CSV
-    const csvContent = csvRows.map(row => 
-      row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')
-    ).join('\n')
-    
-    // Agregar BOM para Excel
-    const BOM = '\uFEFF'
-    const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' })
-    
-    // Crear enlace de descarga
-    const link = document.createElement('a')
-    const url = URL.createObjectURL(blob)
-    link.setAttribute('href', url)
-    
-    // Nombre del archivo con el mes
-    const monthName = format(currentMonth, 'MMMM-yyyy', { locale: es })
-    link.setAttribute('download', `gastos-${monthName}.csv`)
-    link.style.visibility = 'hidden'
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-  }
-
   // Combinar gastos e ingresos y ordenar por fecha
   const allTransactions = [
     ...expenses.map(exp => ({ ...exp, isIncome: false })),
     ...incomes.map(inc => ({ ...inc, isIncome: true }))
   ].sort((a, b) => new Date(b.date) - new Date(a.date))
 
+  const displayTitle = title || `Transacciones del Mes${allTransactions.length > 0 ? ` (${allTransactions.length})` : ''}`
+
   if (allTransactions.length === 0) {
     return (
       <div className="expense-list-card">
-        <h3>Transacciones del Mes</h3>
+        <h3>{title || 'Transacciones del Mes'}</h3>
         <div className="empty-expenses">
           <p>No hay transacciones registradas para este mes</p>
         </div>
@@ -111,15 +48,7 @@ function ExpenseList({ expenses, incomes, categories, onDeleteExpense, onDeleteI
   return (
     <div className="expense-list-card">
       <div className="expense-list-header">
-        <h3>Transacciones del Mes ({allTransactions.length})</h3>
-        <button
-          className="download-button"
-          onClick={downloadCSV}
-          title="Descargar planilla CSV"
-        >
-          <Download size={18} />
-          Descargar CSV
-        </button>
+        <h3>{displayTitle}</h3>
       </div>
       <div className="expense-list">
         {allTransactions.map(transaction => {

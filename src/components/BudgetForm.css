@@ -61,17 +61,26 @@
 }
 
 .budget-input {
-  padding: 0.75rem;
-  border: 2px solid var(--border);
-  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  border: 2px solid #F5E6E6;
+  border-radius: 12px;
   font-size: 1rem;
-  transition: border-color 0.2s;
+  transition: all 0.2s;
+  background: #FFF9F9;
+  color: var(--text);
+  font-family: 'Poppins', sans-serif;
+}
+
+.budget-input:hover {
+  border-color: #FFB6C1;
+  background: #FFF5F5;
 }
 
 .budget-input:focus {
   outline: none;
   border-color: #FFB6C1;
-  box-shadow: 0 0 0 3px rgba(255, 182, 193, 0.1);
+  background: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(255, 182, 193, 0.15);
 }
 
 .form-actions {
@@ -218,23 +227,33 @@
 
 .budget-edit-form {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .budget-edit-input {
-  padding: 0.5rem;
+  padding: 0.5rem 0.75rem;
   border: 2px solid #F5E6E6;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 0.9rem;
   width: 120px;
-  transition: border-color 0.2s;
+  transition: all 0.2s;
+  background: #FFF9F9;
+  color: var(--text);
+  font-family: 'Poppins', sans-serif;
+}
+
+.budget-edit-input:hover {
+  border-color: #FFB6C1;
+  background: #FFF5F5;
 }
 
 .budget-edit-input:focus {
   outline: none;
   border-color: #FFB6C1;
-  box-shadow: 0 0 0 3px rgba(255, 182, 193, 0.1);
+  background: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(255, 182, 193, 0.15);
 }
 
 .save-budget-button {

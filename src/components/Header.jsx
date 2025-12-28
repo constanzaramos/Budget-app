@@ -1,15 +1,30 @@
 import { ChevronLeft, ChevronRight, Calendar, DollarSign } from 'lucide-react'
-import { format } from 'date-fns'
+import { format, startOfMonth, endOfMonth } from 'date-fns'
 import { es } from 'date-fns/locale'
 import './Header.css'
 
 function Header({ currentMonth, onMonthChange, currency, onCurrencyChange, exchangeRate, rateLoading }) {
+  const monthStart = startOfMonth(currentMonth)
+  const monthEnd = endOfMonth(currentMonth)
+  
   return (
     <header className="header">
       <div className="header-content">
-        <div className="header-title">
-          <Calendar className="header-icon" size={28} />
-          <h1>Aplicación de Presupuesto</h1>
+        <div className="header-left">
+          <div className="header-month-title">
+            <h1 className="month-display">{format(currentMonth, 'MMMM', { locale: es })}</h1>
+            <h2 className="dashboard-title">TABLERO DE PRESUPUESTO</h2>
+          </div>
+          <div className="header-dates">
+            <div className="date-item">
+              <span className="date-label">FECHA DE INICIO</span>
+              <span className="date-value">{format(monthStart, 'd-MMM-yy', { locale: es })}</span>
+            </div>
+            <div className="date-item">
+              <span className="date-label">FECHA DE FIN</span>
+              <span className="date-value">{format(monthEnd, 'd-MMM-yy', { locale: es })}</span>
+            </div>
+          </div>
         </div>
         <div className="header-controls">
           <div className="currency-selector">

@@ -12,10 +12,27 @@
   gap: 2rem;
 }
 
-.app-actions {
+.app-forms-section {
+  width: 100%;
+}
+
+.forms-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.transactions-forms {
+  display: flex;
+  flex-direction: column;
   gap: 1.5rem;
+}
+
+@media (max-width: 1200px) {
+  .forms-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 768px) {
@@ -24,8 +41,9 @@
     gap: 1.5rem;
   }
 
-  .app-actions {
+  .forms-grid {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 }
 

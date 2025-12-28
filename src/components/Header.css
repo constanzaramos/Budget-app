@@ -10,9 +10,71 @@
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   flex-wrap: wrap;
-  gap: 1.5rem;
+  gap: 2rem;
+}
+
+.header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex: 1;
+}
+
+.header-month-title {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.month-display {
+  font-size: 3rem;
+  font-weight: 700;
+  margin: 0;
+  font-family: 'Dancing Script', cursive;
+  font-style: italic;
+  color: #4A4A4A;
+  text-transform: capitalize;
+  line-height: 1;
+}
+
+.dashboard-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  color: #8B7D8B;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.header-dates {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.date-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.date-label {
+  font-size: 0.75rem;
+  color: #8B7D8B;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.date-value {
+  font-size: 0.9rem;
+  color: #4A4A4A;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
 }
 
 .header-controls {
@@ -22,24 +84,6 @@
   flex-wrap: wrap;
 }
 
-.header-title {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.header-icon {
-  opacity: 0.9;
-}
-
-.header-title h1 {
-  font-size: 2.5rem;
-  font-weight: 600;
-  margin: 0;
-  font-family: 'Dancing Script', cursive;
-  font-style: italic;
-  color: #4A4A4A;
-}
 
 .month-navigator {
   display: flex;
@@ -83,25 +127,38 @@
 }
 
 .currency-select {
-  background: transparent;
-  border: none;
+  background: rgba(255, 255, 255, 0.8);
+  border: 2px solid rgba(255, 182, 193, 0.3);
   color: #4A4A4A;
   font-size: 0.9rem;
   font-weight: 500;
   font-family: 'Poppins', sans-serif;
   cursor: pointer;
-  padding: 0.25rem 0.5rem;
-  border-radius: 8px;
-  transition: background 0.2s;
+  padding: 0.5rem 2rem 0.5rem 0.75rem;
+  border-radius: 12px;
+  transition: all 0.2s;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23FF91A4' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
 }
 
 .currency-select:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(255, 182, 193, 0.5);
+  box-shadow: 0 2px 4px rgba(255, 182, 193, 0.2);
+}
+
+.currency-select:focus {
+  outline: none;
+  border-color: #FFB6C1;
+  box-shadow: 0 0 0 3px rgba(255, 182, 193, 0.2);
 }
 
 .currency-select:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  background: rgba(255, 255, 255, 0.5);
 }
 
 .rate-loading {
@@ -136,8 +193,16 @@
     flex-direction: column;
   }
 
-  .header-title h1 {
-    font-size: 1.5rem;
+  .month-display {
+    font-size: 2rem;
+  }
+
+  .dashboard-title {
+    font-size: 0.875rem;
+  }
+
+  .header-dates {
+    gap: 1rem;
   }
 
   .current-month {

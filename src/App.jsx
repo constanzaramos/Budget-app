@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
 import Header from './components/Header'
-import Dashboard from './components/Dashboard'
-import ExpenseForm from './components/ExpenseForm'
-import IncomeForm from './components/IncomeForm'
-import ExpenseList from './components/ExpenseList'
-import BudgetForm from './components/BudgetForm'
+import Tabs from './components/Tabs'
+import BudgetSection from './components/BudgetSection'
+import ExpensesSection from './components/ExpensesSection'
+import IncomeSection from './components/IncomeSection'
+import SavingsSection from './components/SavingsSection'
+import ConsolidatedSection from './components/ConsolidatedSection'
 import { format, startOfMonth, endOfMonth, parseISO } from 'date-fns'
 import { useExchangeRate } from './hooks/useExchangeRate'
 import './App.css'
@@ -23,13 +24,16 @@ function App() {
   const [categories, setCategories] = useState(() => {
     const saved = localStorage.getItem('budget-categories')
     return saved ? JSON.parse(saved) : [
-      { id: '1', name: 'Alimentación', color: '#FFB6C1', icon: '🍔' },
-      { id: '2', name: 'Transporte', color: '#B0E0E6', icon: '🚗' },
-      { id: '3', name: 'Entretenimiento', color: '#E6E6FA', icon: '🎬' },
-      { id: '4', name: 'Salud', color: '#DDA0DD', icon: '💊' },
-      { id: '5', name: 'Educación', color: '#FFDAB9', icon: '📚' },
-      { id: '6', name: 'Ahorro', color: '#B0E0E6', icon: '💰' },
-      { id: '7', name: 'Otros', color: '#FFFACD', icon: '📦' },
+      { id: '1', name: 'Vivienda', color: '#FFB6C1', icon: '🏠' }, // Rosa pastel
+      { id: '2', name: 'Gastos básicos', color: '#E6E6FA', icon: '💡' }, // Lavanda
+      { id: '3', name: 'Internet', color: '#B0E0E6', icon: '🌐' }, // Azul cielo
+      { id: '4', name: 'Celular', color: '#FFDAB9', icon: '📱' }, // Melocotón
+      { id: '5', name: 'Suscripciones', color: '#DDA0DD', icon: '📺' }, // Ciruela pastel
+      { id: '6', name: 'Alimentación', color: '#B4E4B4', icon: '🍔' }, // Verde pastel
+      { id: '7', name: 'Salud', color: '#FFC0CB', icon: '💊' }, // Rosa
+      { id: '8', name: 'Mascotas', color: '#FFF0F5', icon: '🐾' }, // Lavanda rosado
+      { id: '9', name: 'Entretenimiento', color: '#D8BFD8', icon: '🎬' }, // Orquídea claro
+      { id: '10', name: 'Otros', color: '#FFFACD', icon: '📦' }, // Amarillo pastel
     ]
   })
 
@@ -184,49 +188,72 @@ function App() {
         rateLoading={rateLoading}
       />
       <div className="app-container">
-        <Dashboard
-          budget={budget}
-          totalExpenses={totalExpenses}
-          totalIncomes={totalIncomes}
-          balance={balance}
-          remaining={remaining}
-          percentage={percentage}
-          expenses={currentMonthExpenses}
-          incomes={currentMonthIncomes}
-          categories={categories}
-          categoryBudgets={categoryBudgets}
-          currency={currency}
-          exchangeRate={exchangeRate}
-        />
-        <div className="app-actions">
-          <BudgetForm 
-            budget={budget} 
-            onSetBudget={setBudget}
-            categories={categories}
-            categoryBudgets={categoryBudgets}
-            onSetCategoryBudget={setCategoryBudget}
-            currency={currency}
-            exchangeRate={exchangeRate}
-          />
-          <ExpenseForm 
-            categories={categories}
-            onAddExpense={addExpense}
-            onAddCategory={addCategory}
-          />
-          <IncomeForm 
-            onAddIncome={addIncome}
-          />
-        </div>
-        <ExpenseList
-          expenses={currentMonthExpenses}
-          incomes={currentMonthIncomes}
-          categories={categories}
-          onDeleteExpense={deleteExpense}
-          onDeleteIncome={deleteIncome}
-          currency={currency}
-          exchangeRate={exchangeRate}
-          currentMonth={currentMonth}
-        />
+        <Tabs tabs={[
+          { id: 'budget', label: 'Presupuesto', icon: '💰' },
+          { id: 'expenses', label: 'Gastos', icon: '💸' },
+          { id: 'income', label: 'Ingresos', icon: '📈' },
+          { id: 'savings', label: 'Ahorros', icon: '🐷' },
+          { id: 'consolidated', label: 'Consolidado', icon: '📄' },
+        ]} defaultTab="budget">
+          <div tabId="budget">
+            <BudgetSection
+              budget={budget}
+              onSetBudget={setBudget}
+              categories={categories}
+              categoryBudgets={categoryBudgets}
+              onSetCategoryBudget={setCategoryBudget}
+              currency={currency}
+              exchangeRate={exchangeRate}
+            />
+          </div>
+          <div tabId="expenses">
+            <ExpensesSection
+              expenses={currentMonthExpenses}
+              categories={categories}
+              onAddExpense={addExpense}
+              onAddCategory={addCategory}
+              onDeleteExpense={deleteExpense}
+              currency={currency}
+              exchangeRate={exchangeRate}
+              currentMonth={currentMonth}
+            />
+          </div>
+          <div tabId="income">
+            <IncomeSection
+              incomes={currentMonthIncomes}
+              onAddIncome={addIncome}
+              onDeleteIncome={deleteIncome}
+              currency={currency}
+              exchangeRate={exchangeRate}
+              currentMonth={currentMonth}
+            />
+          </div>
+          <div tabId="savings">
+            <SavingsSection
+              totalIncomes={totalIncomes}
+              totalExpenses={totalExpenses}
+              balance={balance}
+              currency={currency}
+              exchangeRate={exchangeRate}
+            />
+          </div>
+          <div tabId="consolidated">
+            <ConsolidatedSection
+              budget={budget}
+              totalExpenses={totalExpenses}
+              totalIncomes={totalIncomes}
+              balance={balance}
+              remaining={remaining}
+              expenses={currentMonthExpenses}
+              incomes={currentMonthIncomes}
+              categories={categories}
+              categoryBudgets={categoryBudgets}
+              currency={currency}
+              exchangeRate={exchangeRate}
+              currentMonth={currentMonth}
+            />
+          </div>
+        </Tabs>
       </div>
     </div>
   )
