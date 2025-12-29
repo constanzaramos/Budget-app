@@ -33,19 +33,24 @@
 .budget-amount {
   font-size: 2rem;
   font-weight: 700;
-  color: #FF91A4;
+  color: var(--primary);
   margin: 0;
+  transition: color 0.3s ease;
 }
 
 .edit-button {
   background: linear-gradient(135deg, #FFB6C1 0%, #FFDAB9 100%);
-  color: #4A4A4A;
+  color: var(--text);
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 12px;
   font-weight: 500;
   transition: all 0.2s;
   box-shadow: 0 2px 4px rgba(255, 182, 193, 0.3);
+}
+
+[data-theme="dark"] .edit-button {
+  color: #1A1A2E;
 }
 
 .edit-button:hover {
@@ -62,25 +67,29 @@
 
 .budget-input {
   padding: 0.75rem 1rem;
-  border: 2px solid #F5E6E6;
+  border: 2px solid var(--border);
   border-radius: 12px;
   font-size: 1rem;
   transition: all 0.2s;
-  background: #FFF9F9;
+  background: var(--bg);
   color: var(--text);
   font-family: 'Poppins', sans-serif;
 }
 
 .budget-input:hover {
-  border-color: #FFB6C1;
-  background: #FFF5F5;
+  border-color: var(--primary);
+  background: var(--bg-card);
 }
 
 .budget-input:focus {
   outline: none;
-  border-color: #FFB6C1;
-  background: #FFFFFF;
+  border-color: var(--primary);
+  background: var(--bg-card);
   box-shadow: 0 0 0 3px rgba(255, 182, 193, 0.15);
+}
+
+[data-theme="dark"] .budget-input:focus {
+  box-shadow: 0 0 0 3px rgba(255, 145, 164, 0.3);
 }
 
 .form-actions {
@@ -91,13 +100,17 @@
 .submit-button {
   flex: 1;
   background: linear-gradient(135deg, #FFB6C1 0%, #FFDAB9 100%);
-  color: #4A4A4A;
+  color: var(--text);
   border: none;
   padding: 0.75rem;
   border-radius: 12px;
   font-weight: 500;
   transition: all 0.2s;
   box-shadow: 0 2px 4px rgba(255, 182, 193, 0.3);
+}
+
+[data-theme="dark"] .submit-button {
+  color: #1A1A2E;
 }
 
 .submit-button:hover {
@@ -117,8 +130,12 @@
 }
 
 .cancel-button:hover {
-  background: #FFF5F5;
-  border-color: #FFB6C1;
+  background: var(--bg);
+  border-color: var(--primary);
+}
+
+[data-theme="dark"] .cancel-button:hover {
+  background: var(--bg-card);
 }
 
 .category-budgets-section {
@@ -155,15 +172,15 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.75rem;
-  background: #FFF9F9;
+  background: var(--bg);
   border-radius: 12px;
   border: 1px solid var(--border);
   transition: all 0.2s;
 }
 
 .category-budget-item:hover {
-  background: #FFF5F5;
-  box-shadow: 0 2px 4px rgba(255, 182, 193, 0.1);
+  background: var(--bg-card);
+  box-shadow: var(--shadow);
 }
 
 .category-info {
@@ -199,16 +216,17 @@
 
 .budget-amount-display {
   font-weight: 600;
-  color: #FF91A4;
+  color: var(--primary);
   font-size: 0.95rem;
   min-width: 100px;
   text-align: right;
+  transition: color 0.3s ease;
 }
 
 .edit-budget-button {
   background: linear-gradient(135deg, #FFB6C1 0%, #FFDAB9 100%);
   border: none;
-  color: #4A4A4A;
+  color: var(--text);
   padding: 0.4rem;
   border-radius: 8px;
   display: flex;
@@ -217,6 +235,10 @@
   cursor: pointer;
   transition: all 0.2s;
   box-shadow: 0 1px 3px rgba(255, 182, 193, 0.3);
+}
+
+[data-theme="dark"] .edit-budget-button {
+  color: #1A1A2E;
 }
 
 .edit-budget-button:hover {
@@ -234,32 +256,36 @@
 
 .budget-edit-input {
   padding: 0.5rem 0.75rem;
-  border: 2px solid #F5E6E6;
+  border: 2px solid var(--border);
   border-radius: 10px;
   font-size: 0.9rem;
   width: 120px;
   transition: all 0.2s;
-  background: #FFF9F9;
+  background: var(--bg);
   color: var(--text);
   font-family: 'Poppins', sans-serif;
 }
 
 .budget-edit-input:hover {
-  border-color: #FFB6C1;
-  background: #FFF5F5;
+  border-color: var(--primary);
+  background: var(--bg-card);
 }
 
 .budget-edit-input:focus {
   outline: none;
-  border-color: #FFB6C1;
-  background: #FFFFFF;
+  border-color: var(--primary);
+  background: var(--bg-card);
   box-shadow: 0 0 0 3px rgba(255, 182, 193, 0.15);
+}
+
+[data-theme="dark"] .budget-edit-input:focus {
+  box-shadow: 0 0 0 3px rgba(255, 145, 164, 0.3);
 }
 
 .save-budget-button {
   background: linear-gradient(135deg, #B0E0E6 0%, #87CEEB 100%);
   border: none;
-  color: #4A4A4A;
+  color: var(--text);
   padding: 0.4rem;
   border-radius: 8px;
   display: flex;
@@ -267,6 +293,10 @@
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s;
+}
+
+[data-theme="dark"] .save-budget-button {
+  color: #1A1A2E;
 }
 
 .save-budget-button:hover {
@@ -288,8 +318,12 @@
 }
 
 .cancel-budget-button:hover {
-  background: #FFF5F5;
-  border-color: #FFB6C1;
+  background: var(--bg);
+  border-color: var(--primary);
+}
+
+[data-theme="dark"] .cancel-budget-button:hover {
+  background: var(--bg-card);
 }
 
 @media (max-width: 768px) {

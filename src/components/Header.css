@@ -3,6 +3,22 @@
   color: #4A4A4A;
   padding: 2rem;
   box-shadow: var(--shadow-lg);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+[data-theme="dark"] .header {
+  background: linear-gradient(135deg, #16213E 0%, #0F3460 50%, #1A1A2E 100%);
+  color: var(--text);
+}
+
+[data-theme="dark"] .header .month-display,
+[data-theme="dark"] .header .dashboard-title,
+[data-theme="dark"] .header .date-label,
+[data-theme="dark"] .header .date-value,
+[data-theme="dark"] .header .current-month,
+[data-theme="dark"] .header .rate-loading,
+[data-theme="dark"] .header .exchange-rate {
+  color: var(--text);
 }
 
 .header-content {
@@ -34,9 +50,10 @@
   margin: 0;
   font-family: 'Dancing Script', cursive;
   font-style: italic;
-  color: #4A4A4A;
+  color: var(--text);
   text-transform: capitalize;
   line-height: 1;
+  transition: color 0.3s ease;
 }
 
 .dashboard-title {
@@ -44,9 +61,10 @@
   font-weight: 600;
   margin: 0;
   font-family: 'Poppins', sans-serif;
-  color: #8B7D8B;
+  color: var(--text-light);
   letter-spacing: 0.1em;
   text-transform: uppercase;
+  transition: color 0.3s ease;
 }
 
 .header-dates {
@@ -63,18 +81,20 @@
 
 .date-label {
   font-size: 0.75rem;
-  color: #8B7D8B;
+  color: var(--text-light);
   font-family: 'Poppins', sans-serif;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  transition: color 0.3s ease;
 }
 
 .date-value {
   font-size: 0.9rem;
-  color: #4A4A4A;
+  color: var(--text);
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
+  transition: color 0.3s ease;
 }
 
 .header-controls {
@@ -82,6 +102,93 @@
   align-items: center;
   gap: 1rem;
   flex-wrap: wrap;
+}
+
+.theme-toggle-button {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  border: none;
+  color: var(--text);
+  padding: 0.75rem;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(255, 182, 193, 0.2);
+}
+
+.theme-toggle-button:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(255, 182, 193, 0.3);
+}
+
+[data-theme="dark"] .theme-toggle-button {
+  background: rgba(22, 33, 62, 0.6);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .theme-toggle-button:hover {
+  background: rgba(22, 33, 62, 0.9);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.profile-info-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(255, 182, 193, 0.2);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+[data-theme="dark"] .profile-info-header {
+  background: rgba(22, 33, 62, 0.6);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.profile-name-header {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text);
+  transition: color 0.3s ease;
+}
+
+.logout-button {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  border: none;
+  color: var(--text);
+  padding: 0.75rem;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(255, 182, 193, 0.2);
+}
+
+.logout-button:hover {
+  background: rgba(255, 182, 193, 0.8);
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(255, 182, 193, 0.3);
+}
+
+[data-theme="dark"] .logout-button {
+  background: rgba(22, 33, 62, 0.6);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .logout-button:hover {
+  background: rgba(255, 145, 164, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 
@@ -94,12 +201,18 @@
   padding: 0.5rem 1rem;
   border-radius: 20px;
   box-shadow: 0 2px 8px rgba(255, 182, 193, 0.2);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+[data-theme="dark"] .month-navigator {
+  background: rgba(22, 33, 62, 0.6);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .nav-button {
   background: rgba(255, 255, 255, 0.7);
   border: none;
-  color: #4A4A4A;
+  color: var(--text);
   padding: 0.5rem;
   border-radius: 12px;
   display: flex;
@@ -115,6 +228,16 @@
   box-shadow: 0 4px 8px rgba(255, 182, 193, 0.3);
 }
 
+[data-theme="dark"] .nav-button {
+  background: rgba(22, 33, 62, 0.7);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .nav-button:hover {
+  background: rgba(22, 33, 62, 0.9);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
 .currency-selector {
   display: flex;
   align-items: center;
@@ -124,12 +247,18 @@
   padding: 0.5rem 1rem;
   border-radius: 20px;
   box-shadow: 0 2px 8px rgba(255, 182, 193, 0.2);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+[data-theme="dark"] .currency-selector {
+  background: rgba(22, 33, 62, 0.6);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .currency-select {
   background: rgba(255, 255, 255, 0.8);
   border: 2px solid rgba(255, 182, 193, 0.3);
-  color: #4A4A4A;
+  color: var(--text);
   font-size: 0.9rem;
   font-weight: 500;
   font-family: 'Poppins', sans-serif;
@@ -141,6 +270,11 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23FF91A4' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 0.75rem center;
+}
+
+[data-theme="dark"] .currency-select {
+  background: rgba(22, 33, 62, 0.8);
+  border: 2px solid rgba(255, 145, 164, 0.3);
 }
 
 .currency-select:hover {
@@ -163,15 +297,17 @@
 
 .rate-loading {
   font-size: 0.75rem;
-  color: #8B7D8B;
+  color: var(--text-light);
   font-style: italic;
+  transition: color 0.3s ease;
 }
 
 .exchange-rate {
   font-size: 0.75rem;
-  color: #8B7D8B;
+  color: var(--text-light);
   font-style: italic;
   margin-left: 0.5rem;
+  transition: color 0.3s ease;
 }
 
 .current-month {
@@ -180,8 +316,9 @@
   text-transform: capitalize;
   min-width: 180px;
   text-align: center;
-  color: #4A4A4A;
+  color: var(--text);
   font-family: 'Poppins', sans-serif;
+  transition: color 0.3s ease;
 }
 
 @media (max-width: 768px) {

@@ -69,17 +69,32 @@
 
 .stat-icon.savings {
   background: linear-gradient(135deg, #FFB6C1 0%, #E6E6FA 100%);
-  color: #4A4A4A;
+  color: var(--text);
+  transition: color 0.3s ease;
+}
+
+[data-theme="dark"] .stat-icon.savings {
+  background: linear-gradient(135deg, #FF91A4 0%, #B8A8D8 100%);
 }
 
 .stat-icon.income {
   background: linear-gradient(135deg, #B0E0E6 0%, #87CEEB 100%);
-  color: #4A4A4A;
+  color: var(--text);
+  transition: color 0.3s ease;
+}
+
+[data-theme="dark"] .stat-icon.income {
+  background: linear-gradient(135deg, #7FC8D6 0%, #6BB8C6 100%);
 }
 
 .stat-icon.expenses {
   background: linear-gradient(135deg, #E6E6FA 0%, #D8BFD8 100%);
-  color: #4A4A4A;
+  color: var(--text);
+  transition: color 0.3s ease;
+}
+
+[data-theme="dark"] .stat-icon.expenses {
+  background: linear-gradient(135deg, #B8A8D8 0%, #A090C8 100%);
 }
 
 .stat-content {

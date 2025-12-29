@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import LoginPage from './components/LoginPage'
 import Header from './components/Header'
 import Tabs from './components/Tabs'
 import BudgetSection from './components/BudgetSection'
@@ -11,74 +12,240 @@ import { useExchangeRate } from './hooks/useExchangeRate'
 import './App.css'
 
 function App() {
-  const [expenses, setExpenses] = useState(() => {
-    const saved = localStorage.getItem('budget-expenses')
+  // Funciones helper para claves de localStorage (definidas primero)
+  const getMonthKey = (date) => {
+    return format(date, 'yyyy-MM')
+  }
+
+  // Función para cargar datos del perfil actual
+  const loadProfileData = (profileId) => {
+    const profileKey = (key) => `${key}-${profileId}`
+    
+    const defaultCategories = [
+      { id: '1', name: 'Vivienda', color: '#FFB6C1', icon: '🏠' },
+      { id: '2', name: 'Gastos básicos', color: '#E6E6FA', icon: '💡' },
+      { id: '3', name: 'Internet', color: '#B0E0E6', icon: '🌐' },
+      { id: '4', name: 'Celular', color: '#FFDAB9', icon: '📱' },
+      { id: '5', name: 'Suscripciones', color: '#DDA0DD', icon: '📺' },
+      { id: '6', name: 'Alimentación', color: '#B4E4B4', icon: '🍔' },
+      { id: '7', name: 'Salud', color: '#FFC0CB', icon: '💊' },
+      { id: '8', name: 'Mascotas', color: '#FFF0F5', icon: '🐾' },
+      { id: '9', name: 'Entretenimiento', color: '#D8BFD8', icon: '🎬' },
+      { id: '10', name: 'Otros', color: '#FFFACD', icon: '📦' },
+    ]
+
+    return {
+      expenses: JSON.parse(localStorage.getItem(profileKey('budget-expenses')) || '[]'),
+      incomes: JSON.parse(localStorage.getItem(profileKey('budget-incomes')) || '[]'),
+      categories: JSON.parse(localStorage.getItem(profileKey('budget-categories')) || JSON.stringify(defaultCategories)),
+      currency: localStorage.getItem(profileKey('budget-currency')) || 'CLP',
+    }
+  }
+
+  // Estado de autenticación y perfiles
+  const [currentProfile, setCurrentProfile] = useState(() => {
+    const saved = localStorage.getItem('budget-current-profile')
+    return saved || null
+  })
+
+  const [profiles, setProfiles] = useState(() => {
+    const saved = localStorage.getItem('budget-profiles')
     return saved ? JSON.parse(saved) : []
+  })
+
+  // Funciones helper para claves de localStorage
+  const getProfileKey = (key) => {
+    return currentProfile ? `${key}-${currentProfile}` : key
+  }
+
+  const getProfileMonthKey = (key, date) => {
+    const monthKey = getMonthKey(date)
+    return currentProfile ? `${key}-${currentProfile}-${monthKey}` : `${key}-${monthKey}`
+  }
+
+  const [expenses, setExpenses] = useState(() => {
+    const saved = currentProfile ? loadProfileData(currentProfile).expenses : []
+    return saved
   })
 
   const [incomes, setIncomes] = useState(() => {
-    const saved = localStorage.getItem('budget-incomes')
-    return saved ? JSON.parse(saved) : []
+    const saved = currentProfile ? loadProfileData(currentProfile).incomes : []
+    return saved
   })
 
   const [categories, setCategories] = useState(() => {
-    const saved = localStorage.getItem('budget-categories')
-    return saved ? JSON.parse(saved) : [
-      { id: '1', name: 'Vivienda', color: '#FFB6C1', icon: '🏠' }, // Rosa pastel
-      { id: '2', name: 'Gastos básicos', color: '#E6E6FA', icon: '💡' }, // Lavanda
-      { id: '3', name: 'Internet', color: '#B0E0E6', icon: '🌐' }, // Azul cielo
-      { id: '4', name: 'Celular', color: '#FFDAB9', icon: '📱' }, // Melocotón
-      { id: '5', name: 'Suscripciones', color: '#DDA0DD', icon: '📺' }, // Ciruela pastel
-      { id: '6', name: 'Alimentación', color: '#B4E4B4', icon: '🍔' }, // Verde pastel
-      { id: '7', name: 'Salud', color: '#FFC0CB', icon: '💊' }, // Rosa
-      { id: '8', name: 'Mascotas', color: '#FFF0F5', icon: '🐾' }, // Lavanda rosado
-      { id: '9', name: 'Entretenimiento', color: '#D8BFD8', icon: '🎬' }, // Orquídea claro
-      { id: '10', name: 'Otros', color: '#FFFACD', icon: '📦' }, // Amarillo pastel
-    ]
+    const saved = currentProfile ? loadProfileData(currentProfile).categories : []
+    return saved
   })
 
   const [budget, setBudget] = useState(() => {
-    const saved = localStorage.getItem('budget-amount')
+    if (!currentProfile) return 0
+    const monthKey = getMonthKey(new Date())
+    const saved = localStorage.getItem(`budget-amount-${currentProfile}-${monthKey}`)
     return saved ? parseFloat(saved) : 0
   })
 
   const [categoryBudgets, setCategoryBudgets] = useState(() => {
-    const saved = localStorage.getItem('budget-category-budgets')
+    if (!currentProfile) return {}
+    const monthKey = getMonthKey(new Date())
+    const saved = localStorage.getItem(`budget-category-budgets-${currentProfile}-${monthKey}`)
     return saved ? JSON.parse(saved) : {}
   })
 
   const [currentMonth, setCurrentMonth] = useState(new Date())
   const [currency, setCurrency] = useState(() => {
-    const saved = localStorage.getItem('budget-currency')
-    return saved || 'CLP'
+    if (!currentProfile) return 'CLP'
+    return loadProfileData(currentProfile).currency
   })
+
+  // Estado para modo oscuro (global, no por perfil)
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const saved = localStorage.getItem('budget-dark-mode')
+    return saved === 'true'
+  })
+
+  // Aplicar tema al body
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.setAttribute('data-theme', 'dark')
+    } else {
+      document.documentElement.removeAttribute('data-theme')
+    }
+    localStorage.setItem('budget-dark-mode', isDarkMode.toString())
+  }, [isDarkMode])
 
   const { exchangeRate, loading: rateLoading } = useExchangeRate()
 
-  // Guardar en localStorage cuando cambian los datos
+  // Cargar datos cuando cambia el perfil
   useEffect(() => {
-    localStorage.setItem('budget-expenses', JSON.stringify(expenses))
-  }, [expenses])
+    if (currentProfile) {
+      const data = loadProfileData(currentProfile)
+      setExpenses(data.expenses)
+      setIncomes(data.incomes)
+      setCategories(data.categories)
+      setCurrency(data.currency)
+      
+      const monthKey = getMonthKey(currentMonth)
+      const savedBudget = localStorage.getItem(`budget-amount-${currentProfile}-${monthKey}`)
+      const savedCategoryBudgets = localStorage.getItem(`budget-category-budgets-${currentProfile}-${monthKey}`)
+      
+      setBudget(savedBudget ? parseFloat(savedBudget) : 0)
+      setCategoryBudgets(savedCategoryBudgets ? JSON.parse(savedCategoryBudgets) : {})
+    }
+  }, [currentProfile])
+
+  // Guardar en localStorage cuando cambian los datos (solo si hay perfil activo)
+  useEffect(() => {
+    if (currentProfile) {
+      localStorage.setItem(getProfileKey('budget-expenses'), JSON.stringify(expenses))
+    }
+  }, [expenses, currentProfile])
 
   useEffect(() => {
-    localStorage.setItem('budget-incomes', JSON.stringify(incomes))
-  }, [incomes])
+    if (currentProfile) {
+      localStorage.setItem(getProfileKey('budget-incomes'), JSON.stringify(incomes))
+    }
+  }, [incomes, currentProfile])
 
   useEffect(() => {
-    localStorage.setItem('budget-categories', JSON.stringify(categories))
-  }, [categories])
+    if (currentProfile) {
+      localStorage.setItem(getProfileKey('budget-categories'), JSON.stringify(categories))
+    }
+  }, [categories, currentProfile])
+
+  // Guardar presupuesto por mes y perfil
+  useEffect(() => {
+    if (currentProfile) {
+      const key = getProfileMonthKey('budget-amount', currentMonth)
+      localStorage.setItem(key, budget.toString())
+    }
+  }, [budget, currentMonth, currentProfile])
 
   useEffect(() => {
-    localStorage.setItem('budget-amount', budget.toString())
-  }, [budget])
+    if (currentProfile) {
+      localStorage.setItem(getProfileKey('budget-currency'), currency)
+    }
+  }, [currency, currentProfile])
 
+  // Guardar presupuestos por categoría por mes y perfil
   useEffect(() => {
-    localStorage.setItem('budget-currency', currency)
-  }, [currency])
+    if (currentProfile) {
+      const key = getProfileMonthKey('budget-category-budgets', currentMonth)
+      localStorage.setItem(key, JSON.stringify(categoryBudgets))
+    }
+  }, [categoryBudgets, currentMonth, currentProfile])
 
+  // Cargar presupuesto y presupuestos por categoría cuando cambia el mes
   useEffect(() => {
-    localStorage.setItem('budget-category-budgets', JSON.stringify(categoryBudgets))
-  }, [categoryBudgets])
+    if (currentProfile) {
+      const key = getProfileMonthKey('budget-amount', currentMonth)
+      const savedBudget = localStorage.getItem(key)
+      const categoryKey = getProfileMonthKey('budget-category-budgets', currentMonth)
+      const savedCategoryBudgets = localStorage.getItem(categoryKey)
+      
+      if (savedBudget !== null) {
+        setBudget(parseFloat(savedBudget))
+      } else {
+        setBudget(0)
+      }
+      
+      if (savedCategoryBudgets !== null) {
+        setCategoryBudgets(JSON.parse(savedCategoryBudgets))
+      } else {
+        setCategoryBudgets({})
+      }
+    }
+  }, [currentMonth, currentProfile])
+
+  // Funciones de gestión de perfiles
+  const handleLogin = (profileId) => {
+    setCurrentProfile(profileId)
+    localStorage.setItem('budget-current-profile', profileId)
+  }
+
+  const handleLogout = () => {
+    setCurrentProfile(null)
+    localStorage.removeItem('budget-current-profile')
+    // Limpiar estados
+    setExpenses([])
+    setIncomes([])
+    setCategories([])
+    setBudget(0)
+    setCategoryBudgets({})
+  }
+
+  const handleCreateProfile = (name) => {
+    const newProfile = {
+      id: Date.now().toString(),
+      name: name.trim(),
+      createdAt: new Date().toISOString()
+    }
+    const updatedProfiles = [...profiles, newProfile]
+    setProfiles(updatedProfiles)
+    localStorage.setItem('budget-profiles', JSON.stringify(updatedProfiles))
+  }
+
+  const handleDeleteProfile = (profileId) => {
+    // Eliminar todos los datos del perfil
+    const keysToRemove = []
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i)
+      if (key && key.includes(`-${profileId}`)) {
+        keysToRemove.push(key)
+      }
+    }
+    keysToRemove.forEach(key => localStorage.removeItem(key))
+
+    // Eliminar el perfil de la lista
+    const updatedProfiles = profiles.filter(p => p.id !== profileId)
+    setProfiles(updatedProfiles)
+    localStorage.setItem('budget-profiles', JSON.stringify(updatedProfiles))
+
+    // Si el perfil eliminado era el actual, cerrar sesión
+    if (currentProfile === profileId) {
+      handleLogout()
+    }
+  }
 
   // Obtener gastos del mes actual
   const getCurrentMonthExpenses = () => {
@@ -177,6 +344,21 @@ function App() {
     setCurrentMonth(newMonth)
   }
 
+  // Si no hay perfil activo, mostrar página de login
+  if (!currentProfile) {
+    return (
+      <LoginPage
+        onLogin={handleLogin}
+        profiles={profiles}
+        onCreateProfile={handleCreateProfile}
+        onDeleteProfile={handleDeleteProfile}
+      />
+    )
+  }
+
+  // Obtener nombre del perfil actual
+  const currentProfileName = profiles.find(p => p.id === currentProfile)?.name || 'Usuario'
+
   return (
     <div className="app">
       <Header 
@@ -186,6 +368,10 @@ function App() {
         onCurrencyChange={setCurrency}
         exchangeRate={exchangeRate}
         rateLoading={rateLoading}
+        isDarkMode={isDarkMode}
+        onToggleDarkMode={() => setIsDarkMode(!isDarkMode)}
+        currentProfileName={currentProfileName}
+        onLogout={handleLogout}
       />
       <div className="app-container">
         <Tabs tabs={[
@@ -235,6 +421,9 @@ function App() {
               balance={balance}
               currency={currency}
               exchangeRate={exchangeRate}
+              categories={categories}
+              onAddExpense={addExpense}
+              currentMonth={currentMonth}
             />
           </div>
           <div tabId="consolidated">

@@ -1,9 +1,9 @@
-import { ChevronLeft, ChevronRight, Calendar, DollarSign } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Calendar, DollarSign, Moon, Sun, LogOut, User } from 'lucide-react'
 import { format, startOfMonth, endOfMonth } from 'date-fns'
 import { es } from 'date-fns/locale'
 import './Header.css'
 
-function Header({ currentMonth, onMonthChange, currency, onCurrencyChange, exchangeRate, rateLoading }) {
+function Header({ currentMonth, onMonthChange, currency, onCurrencyChange, exchangeRate, rateLoading, isDarkMode, onToggleDarkMode, currentProfileName, onLogout }) {
   const monthStart = startOfMonth(currentMonth)
   const monthEnd = endOfMonth(currentMonth)
   
@@ -27,6 +27,26 @@ function Header({ currentMonth, onMonthChange, currency, onCurrencyChange, excha
           </div>
         </div>
         <div className="header-controls">
+          <div className="profile-info-header">
+            <User size={18} />
+            <span className="profile-name-header">{currentProfileName}</span>
+          </div>
+          <button
+            className="theme-toggle-button"
+            onClick={onToggleDarkMode}
+            title={isDarkMode ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+            aria-label={isDarkMode ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+          >
+            {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+          </button>
+          <button
+            className="logout-button"
+            onClick={onLogout}
+            title="Cerrar sesión"
+            aria-label="Cerrar sesión"
+          >
+            <LogOut size={18} />
+          </button>
           <div className="currency-selector">
             <DollarSign size={18} />
             <select 

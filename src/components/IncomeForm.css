@@ -34,32 +34,37 @@
 .income-form .form-group input,
 .income-form .form-group select {
   padding: 0.75rem 1rem;
-  border: 2px solid #E0F4F8;
+  border: 2px solid var(--border);
   border-radius: 12px;
   font-size: 1rem;
   transition: all 0.2s;
-  background: #F0FDFF;
+  background: var(--bg);
   color: var(--text);
   font-family: 'Poppins', sans-serif;
 }
 
 .income-form .form-group input:hover,
 .income-form .form-group select:hover {
-  border-color: #B0E0E6;
-  background: #E8FAFF;
+  border-color: var(--success);
+  background: var(--bg-card);
 }
 
 .income-form .form-group input:focus,
 .income-form .form-group select:focus {
   outline: none;
-  border-color: #B0E0E6;
-  background: #FFFFFF;
+  border-color: var(--success);
+  background: var(--bg-card);
   box-shadow: 0 0 0 3px rgba(176, 224, 230, 0.15);
+}
+
+[data-theme="dark"] .income-form .form-group input:focus,
+[data-theme="dark"] .income-form .form-group select:focus {
+  box-shadow: 0 0 0 3px rgba(127, 200, 214, 0.3);
 }
 
 .income-form .submit-button {
   background: linear-gradient(135deg, #B0E0E6 0%, #87CEEB 100%);
-  color: #4A4A4A;
+  color: var(--text);
   border: none;
   padding: 0.75rem;
   border-radius: 12px;
@@ -68,6 +73,10 @@
   transition: all 0.2s;
   margin-top: 0.5rem;
   box-shadow: 0 2px 4px rgba(176, 224, 230, 0.3);
+}
+
+[data-theme="dark"] .income-form .submit-button {
+  color: #1A1A2E;
 }
 
 .income-form .submit-button:hover {

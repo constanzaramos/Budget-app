@@ -176,6 +176,35 @@
   font-weight: 600;
 }
 
+/* Consolidated Charts Grid */
+.consolidated-charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.chart-card {
+  background: var(--bg-card);
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.chart-card h4 {
+  font-family: 'Dancing Script', cursive;
+  font-style: italic;
+  margin-bottom: 1rem;
+  color: var(--text);
+  font-size: 1.25rem;
+  text-align: center;
+}
+
 @media print {
   .download-pdf-button {
     display: none;
@@ -214,6 +243,10 @@
     font-weight: 600;
     margin-right: 0.5rem;
     color: var(--text-light);
+  }
+
+  .consolidated-charts-grid {
+    grid-template-columns: 1fr;
   }
 }
 
