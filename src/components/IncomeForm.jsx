@@ -37,21 +37,23 @@ function IncomeForm({ onAddIncome }) {
     const newErrors = {}
     
     // Validar cantidad
+    const cleanAmount = amount ? amount.replace(/\./g, '').trim() : ''
     const amountValue = parseFormattedNumber(amount)
-    if (!amount || amount.trim() === '') {
+    if (!cleanAmount || cleanAmount === '') {
       newErrors.amount = 'La cantidad es obligatoria'
-    } else if (amountValue <= 0) {
+    } else if (isNaN(amountValue) || amountValue <= 0) {
       newErrors.amount = 'La cantidad debe ser mayor a cero'
     } else if (amountValue > 999999999) {
       newErrors.amount = 'La cantidad no puede ser mayor a 999.999.999'
     }
     
     // Validar descripción
-    if (!description || description.trim() === '') {
+    const cleanDescription = description ? description.trim() : ''
+    if (!cleanDescription || cleanDescription === '') {
       newErrors.description = 'La descripción es obligatoria'
-    } else if (description.trim().length < 3) {
+    } else if (cleanDescription.length < 3) {
       newErrors.description = 'La descripción debe tener al menos 3 caracteres'
-    } else if (description.trim().length > 100) {
+    } else if (cleanDescription.length > 100) {
       newErrors.description = 'La descripción no puede tener más de 100 caracteres'
     }
     
@@ -62,7 +64,9 @@ function IncomeForm({ onAddIncome }) {
       const selectedDate = new Date(date)
       const today = new Date()
       today.setHours(23, 59, 59, 999)
-      if (selectedDate > today) {
+      if (isNaN(selectedDate.getTime())) {
+        newErrors.date = 'La fecha no es válida'
+      } else if (selectedDate > today) {
         newErrors.date = 'La fecha no puede ser futura'
       }
     }
@@ -79,17 +83,25 @@ function IncomeForm({ onAddIncome }) {
   const handleSubmit = (e) => {
     e.preventDefault()
     if (validateForm()) {
-      onAddIncome({
+      const incomeData = {
         amount: parseFormattedNumber(amount),
         description: description.trim(),
         date,
         source: source.trim() || 'Otros',
-      })
-      setAmount('')
-      setDescription('')
-      setSource('')
-      setDate(format(new Date(), 'yyyy-MM-dd'))
-      setErrors({})
+      }
+      
+      // Verificar que onAddIncome existe y es una función
+      if (typeof onAddIncome === 'function') {
+        onAddIncome(incomeData)
+        setAmount('')
+        setDescription('')
+        setSource('')
+        setDate(format(new Date(), 'yyyy-MM-dd'))
+        setErrors({})
+      } else {
+        console.error('onAddIncome no es una función válida')
+        setErrors({ submit: 'Error al guardar el ingreso. Por favor, intente nuevamente.' })
+      }
     }
   }
 
@@ -176,6 +188,8 @@ function IncomeForm({ onAddIncome }) {
           {errors.date && <span className="error-message">{errors.date}</span>}
         </div>
 
+        {errors.submit && <span className="error-message" style={{ display: 'block', marginBottom: '1rem' }}>{errors.submit}</span>}
+        
         <button type="submit" className="submit-button">
           Agregar Ingreso
         </button>

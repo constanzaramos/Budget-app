@@ -203,6 +203,11 @@ function ConsolidatedSection({
     }
   }).filter(item => item.expenses > 0 || item.budget > 0)
 
+  // Calcular totales del presupuesto por categoría
+  const totalCategoryBudget = categoryTotals.reduce((sum, item) => sum + item.budget, 0)
+  const totalCategoryExpenses = categoryTotals.reduce((sum, item) => sum + item.expenses, 0)
+  const totalCategoryDifference = totalCategoryBudget - totalCategoryExpenses
+
   return (
     <div className="section-container">
       <div className="consolidated-header">
@@ -518,6 +523,29 @@ function ConsolidatedSection({
                   </div>
                 </div>
               ))}
+              {/* Fila de Total */}
+              {categoryTotals.length > 0 && (
+                <div className="table-row" style={{ 
+                  fontWeight: 'bold', 
+                  backgroundColor: 'var(--bg-card)', 
+                  borderTop: '2px solid var(--border)',
+                  marginTop: '0.5rem',
+                  paddingTop: '0.75rem'
+                }}>
+                  <div className="table-cell category-name-cell" style={{ fontWeight: 'bold' }}>
+                    Total
+                  </div>
+                  <div className="table-cell" style={{ fontWeight: 'bold' }}>
+                    {formatCurrency(totalCategoryBudget)}
+                  </div>
+                  <div className="table-cell" style={{ fontWeight: 'bold' }}>
+                    {formatCurrency(totalCategoryExpenses)}
+                  </div>
+                  <div className={`table-cell ${totalCategoryDifference < 0 ? 'negative' : 'positive'}`} style={{ fontWeight: 'bold' }}>
+                    {formatCurrency(totalCategoryDifference)}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}

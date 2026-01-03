@@ -9,6 +9,15 @@ import SavingsSection from './components/SavingsSection'
 import ConsolidatedSection from './components/ConsolidatedSection'
 import { format, startOfMonth, endOfMonth, parseISO } from 'date-fns'
 import { useExchangeRate } from './hooks/useExchangeRate'
+import { onAuthChange, logout as firebaseLogout, getCurrentUser } from './firebase/authService'
+import { 
+  getUserData, 
+  saveUserData, 
+  getMonthlyBudget, 
+  saveMonthlyBudget,
+  subscribeToUserData,
+  subscribeToMonthlyBudget
+} from './firebase/firestoreService'
 import './App.css'
 
 function App() {
@@ -42,7 +51,12 @@ function App() {
     }
   }
 
-  // Estado de autenticación y perfiles
+  // Estado de autenticación Firebase
+  const [firebaseUser, setFirebaseUser] = useState(null)
+  const [isLoadingAuth, setIsLoadingAuth] = useState(true)
+  const [useFirebase, setUseFirebase] = useState(false)
+
+  // Estado de autenticación y perfiles (modo local)
   const [currentProfile, setCurrentProfile] = useState(() => {
     const saved = localStorage.getItem('budget-current-profile')
     return saved || null
@@ -116,9 +130,77 @@ function App() {
 
   const { exchangeRate, loading: rateLoading } = useExchangeRate()
 
-  // Cargar datos cuando cambia el perfil
+  // Observar cambios en autenticación de Firebase
   useEffect(() => {
-    if (currentProfile) {
+    const unsubscribe = onAuthChange(async (user) => {
+      setIsLoadingAuth(true)
+      if (user) {
+        setFirebaseUser(user)
+        setUseFirebase(true)
+        setCurrentProfile(user.uid)
+        
+        // Cargar datos de Firestore
+        await loadFirebaseData(user.uid)
+      } else {
+        setFirebaseUser(null)
+        setUseFirebase(false)
+        // Si no hay usuario de Firebase, usar modo local
+        if (!currentProfile) {
+          const saved = localStorage.getItem('budget-current-profile')
+          if (saved) {
+            setCurrentProfile(saved)
+          }
+        }
+      }
+      setIsLoadingAuth(false)
+    })
+
+    return () => unsubscribe()
+  }, [])
+
+  // Función para cargar datos de Firebase
+  const loadFirebaseData = async (userId) => {
+    try {
+      // Cargar datos básicos
+      const expensesResult = await getUserData(userId, 'expenses')
+      const incomesResult = await getUserData(userId, 'incomes')
+      const categoriesResult = await getUserData(userId, 'categories')
+      
+      if (expensesResult.data) setExpenses(expensesResult.data)
+      if (incomesResult.data) setIncomes(incomesResult.data)
+      if (categoriesResult.data) setCategories(categoriesResult.data)
+
+      // Cargar presupuesto del mes actual
+      const monthKey = getMonthKey(currentMonth)
+      const budgetResult = await getMonthlyBudget(userId, monthKey)
+      if (budgetResult.budget !== undefined) setBudget(budgetResult.budget)
+      if (budgetResult.categoryBudgets) setCategoryBudgets(budgetResult.categoryBudgets)
+
+      // Suscribirse a cambios en tiempo real
+      subscribeToUserData(userId, 'expenses', (data) => {
+        setExpenses(data || [])
+      })
+      
+      subscribeToUserData(userId, 'incomes', (data) => {
+        setIncomes(data || [])
+      })
+      
+      subscribeToUserData(userId, 'categories', (data) => {
+        if (data && data.length > 0) setCategories(data)
+      })
+
+      subscribeToMonthlyBudget(userId, monthKey, (data) => {
+        setBudget(data.budget || 0)
+        setCategoryBudgets(data.categoryBudgets || {})
+      })
+    } catch (error) {
+      console.error('Error cargando datos de Firebase:', error)
+    }
+  }
+
+  // Cargar datos cuando cambia el perfil (modo local)
+  useEffect(() => {
+    if (currentProfile && !useFirebase) {
       const data = loadProfileData(currentProfile)
       setExpenses(data.expenses)
       setIncomes(data.incomes)
@@ -132,52 +214,73 @@ function App() {
       setBudget(savedBudget ? parseFloat(savedBudget) : 0)
       setCategoryBudgets(savedCategoryBudgets ? JSON.parse(savedCategoryBudgets) : {})
     }
-  }, [currentProfile])
+  }, [currentProfile, useFirebase])
 
-  // Guardar en localStorage cuando cambian los datos (solo si hay perfil activo)
+  // Guardar datos en Firebase o localStorage según el modo
   useEffect(() => {
-    if (currentProfile) {
+    if (currentProfile && useFirebase && firebaseUser) {
+      saveUserData(firebaseUser.uid, 'expenses', expenses)
+    } else if (currentProfile && !useFirebase) {
       localStorage.setItem(getProfileKey('budget-expenses'), JSON.stringify(expenses))
     }
-  }, [expenses, currentProfile])
+  }, [expenses, currentProfile, useFirebase, firebaseUser])
 
   useEffect(() => {
-    if (currentProfile) {
+    if (currentProfile && useFirebase && firebaseUser) {
+      saveUserData(firebaseUser.uid, 'incomes', incomes)
+    } else if (currentProfile && !useFirebase) {
       localStorage.setItem(getProfileKey('budget-incomes'), JSON.stringify(incomes))
     }
-  }, [incomes, currentProfile])
+  }, [incomes, currentProfile, useFirebase, firebaseUser])
 
   useEffect(() => {
-    if (currentProfile) {
+    if (currentProfile && useFirebase && firebaseUser) {
+      saveUserData(firebaseUser.uid, 'categories', categories)
+    } else if (currentProfile && !useFirebase) {
       localStorage.setItem(getProfileKey('budget-categories'), JSON.stringify(categories))
     }
-  }, [categories, currentProfile])
+  }, [categories, currentProfile, useFirebase, firebaseUser])
 
   // Guardar presupuesto por mes y perfil
   useEffect(() => {
-    if (currentProfile) {
+    if (currentProfile && useFirebase && firebaseUser) {
+      const monthKey = getMonthKey(currentMonth)
+      saveMonthlyBudget(firebaseUser.uid, monthKey, budget, categoryBudgets)
+    } else if (currentProfile && !useFirebase) {
       const key = getProfileMonthKey('budget-amount', currentMonth)
       localStorage.setItem(key, budget.toString())
     }
-  }, [budget, currentMonth, currentProfile])
+  }, [budget, currentMonth, currentProfile, useFirebase, firebaseUser, categoryBudgets])
 
   useEffect(() => {
-    if (currentProfile) {
+    if (currentProfile && useFirebase && firebaseUser) {
+      // Guardar currency en perfil de usuario
+      saveUserData(firebaseUser.uid, 'currency', currency)
+    } else if (currentProfile && !useFirebase) {
       localStorage.setItem(getProfileKey('budget-currency'), currency)
     }
-  }, [currency, currentProfile])
+  }, [currency, currentProfile, useFirebase, firebaseUser])
 
   // Guardar presupuestos por categoría por mes y perfil
   useEffect(() => {
-    if (currentProfile) {
+    if (currentProfile && useFirebase && firebaseUser) {
+      const monthKey = getMonthKey(currentMonth)
+      saveMonthlyBudget(firebaseUser.uid, monthKey, budget, categoryBudgets)
+    } else if (currentProfile && !useFirebase) {
       const key = getProfileMonthKey('budget-category-budgets', currentMonth)
       localStorage.setItem(key, JSON.stringify(categoryBudgets))
     }
-  }, [categoryBudgets, currentMonth, currentProfile])
+  }, [categoryBudgets, currentMonth, currentProfile, useFirebase, firebaseUser, budget])
 
   // Cargar presupuesto y presupuestos por categoría cuando cambia el mes
   useEffect(() => {
-    if (currentProfile) {
+    if (currentProfile && useFirebase && firebaseUser) {
+      const monthKey = getMonthKey(currentMonth)
+      getMonthlyBudget(firebaseUser.uid, monthKey).then(result => {
+        setBudget(result.budget || 0)
+        setCategoryBudgets(result.categoryBudgets || {})
+      })
+    } else if (currentProfile && !useFirebase) {
       const key = getProfileMonthKey('budget-amount', currentMonth)
       const savedBudget = localStorage.getItem(key)
       const categoryKey = getProfileMonthKey('budget-category-budgets', currentMonth)
@@ -195,7 +298,7 @@ function App() {
         setCategoryBudgets({})
       }
     }
-  }, [currentMonth, currentProfile])
+  }, [currentMonth, currentProfile, useFirebase, firebaseUser])
 
   // Funciones de gestión de perfiles
   const handleLogin = (profileId) => {
@@ -203,8 +306,12 @@ function App() {
     localStorage.setItem('budget-current-profile', profileId)
   }
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    if (useFirebase && firebaseUser) {
+      await firebaseLogout()
+    }
     setCurrentProfile(null)
+    setUseFirebase(false)
     localStorage.removeItem('budget-current-profile')
     // Limpiar estados
     setExpenses([])
@@ -344,20 +451,33 @@ function App() {
     setCurrentMonth(newMonth)
   }
 
-  // Si no hay perfil activo, mostrar página de login
-  if (!currentProfile) {
+  // Mostrar loading mientras se verifica autenticación
+  if (isLoadingAuth) {
     return (
-      <LoginPage
-        onLogin={handleLogin}
-        profiles={profiles}
-        onCreateProfile={handleCreateProfile}
-        onDeleteProfile={handleDeleteProfile}
-      />
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh',
+        fontFamily: 'Poppins, sans-serif'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>💰</div>
+          <p>Cargando...</p>
+        </div>
+      </div>
     )
   }
 
+  // Si no hay perfil activo, mostrar página de login
+  if (!currentProfile) {
+    return <LoginPage />
+  }
+
   // Obtener nombre del perfil actual
-  const currentProfileName = profiles.find(p => p.id === currentProfile)?.name || 'Usuario'
+  const currentProfileName = useFirebase && firebaseUser 
+    ? (firebaseUser.displayName || firebaseUser.email || 'Usuario')
+    : (profiles.find(p => p.id === currentProfile)?.name || 'Usuario')
 
   return (
     <div className="app">
